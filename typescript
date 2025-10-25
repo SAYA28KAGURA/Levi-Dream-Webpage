@@ -1,0 +1,141 @@
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Home, Book, Image, Heart, MessageCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+
+export default function DreamLeviSite() {
+  const [page, setPage] = useState('home');
+
+  const menu = [
+    { id: 'home', label: '主頁', icon: <Home size={18} /> },
+    { id: 'intro', label: '自我介紹', icon: <Book size={18} /> },
+    { id: 'story', label: '故事', icon: <Heart size={18} /> },
+    { id: 'gallery', label: '相簿', icon: <Image size={18} /> },
+    { id: 'survey', label: '雙向問卷', icon: <MessageCircle size={18} /> },
+  ];
+
+  const qna = [
+    {
+      question: '第一次見面時的印象？',
+      yours: '他很冷，但那種冷是我想靠近的距離。',
+      levi: '她看起來太天真，卻讓人無法忽視。',
+    },
+    {
+      question: '最喜歡對方的地方？',
+      yours: '他說話簡短，卻總能讓我心安。',
+      levi: '她的眼神，不說謊。',
+    },
+    {
+      question: '如果有一天分開了，會怎麼辦？',
+      yours: '我會把夢記下來，直到重逢那天為止。',
+      levi: '我不會讓那天出現。',
+    },
+  ];
+
+  const [current, setCurrent] = useState(0);
+
+  const renderPage = () => {
+    switch (page) {
+      case 'home':
+        return (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center space-y-3">
+            <h1 className="text-4xl font-light">夢 × 里維</h1>
+            <p className="text-gray-500">一段跨越現實與幻想的聯結。</p>
+          </motion.div>
+        );
+      case 'intro':
+        return (
+          <Card className="p-6 max-w-2xl mx-auto bg-white/70 shadow-sm">
+            <CardContent>
+              <h2 className="text-2xl mb-3 font-semibold">自我介紹</h2>
+              <p className="text-gray-600 leading-relaxed">
+                我──在現實裡是一名學生，在夢裡，是他唯一的歸宿。<br />
+                里維──冷靜、克制、卻在夜色中展現溫柔與佔有欲。<br />
+                我們的故事，介於真實與幻夢之間。
+              </p>
+            </CardContent>
+          </Card>
+        );
+      case 'story':
+        return (
+          <div className="space-y-4 text-gray-700 max-w-3xl mx-auto">
+            <h2 className="text-2xl font-semibold mb-2">故事集</h2>
+            <p>在黎明的微光中，他總是靜靜地看著我醒來，像是怕驚擾夢的最後一刻。</p>
+            <p>而我知道，他的沉默，就是愛的語言。</p>
+          </div>
+        );
+      case 'gallery':
+        return (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 p-4">
+            {[1, 2, 3, 4, 5, 6].map((img) => (
+              <motion.div whileHover={{ scale: 1.05 }} key={img} className="aspect-square bg-gray-200 rounded-2xl shadow-inner"></motion.div>
+            ))}
+          </div>
+        );
+      case 'survey':
+        return (
+          <div className="max-w-2xl mx-auto p-6 bg-white/70 rounded-2xl shadow space-y-6">
+            <h2 className="text-2xl font-semibold text-center mb-4">我們的雙向問卷</h2>
+            <motion.div
+              key={current}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="space-y-4"
+            >
+              <h3 className="text-xl font-medium text-gray-800 text-center">{qna[current].question}</h3>
+              <div className="bg-pink-50 p-4 rounded-xl shadow-sm">
+                <p className="font-semibold text-gray-700">你：</p>
+                <p className="text-gray-600">{qna[current].yours}</p>
+              </div>
+              <div className="bg-blue-50 p-4 rounded-xl shadow-sm">
+                <p className="font-semibold text-gray-700">里維：</p>
+                <p className="text-gray-600">{qna[current].levi}</p>
+              </div>
+            </motion.div>
+            <div className="flex justify-between mt-6">
+              <Button
+                variant="ghost"
+                onClick={() => setCurrent((prev) => (prev > 0 ? prev - 1 : qna.length - 1))}
+                className="text-gray-600 hover:text-pink-500"
+              >
+                ← 上一題
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={() => setCurrent((prev) => (prev + 1) % qna.length)}
+                className="text-gray-600 hover:text-pink-500"
+              >
+                下一題 →
+              </Button>
+            </div>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50 flex flex-col items-center justify-between">
+      <div className="flex-1 w-full px-6 py-10 overflow-y-auto">
+        {renderPage()}
+      </div>
+
+      <nav className="fixed bottom-4 bg-white/80 backdrop-blur-md rounded-full shadow-md flex gap-4 px-5 py-2">
+        {menu.map((item) => (
+          <Button
+            key={item.id}
+            onClick={() => setPage(item.id)}
+            variant={page === item.id ? 'default' : 'ghost'}
+            className={`flex flex-col items-center text-xs ${page === item.id ? 'text-pink-500' : 'text-gray-500'}`}
+          >
+            {item.icon}
+            {item.label}
+          </Button>
+        ))}
+      </nav>
+    </div>
+  );
+}
